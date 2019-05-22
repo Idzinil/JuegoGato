@@ -4,66 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Juego del Gato</title>
+    <title>Juego del Gato Componente</title>
 
     <script>
     
     class JuegoGato extends HTMLElement {
-
         constructor () {
             super();
-            const shadow = this.attachShadow({mode: 'open'});
+            this.shadow = this.attachShadow({mode: 'open'});
+        }
+        connectedCallback() {
 
-            const juegoArreglo = [];
-            const casilla = document.createElement('button');
-
-            for (var i = 0; i < 3; i++) {
-                for (var j = 0; j < 3; j++) {
+            //let tamanio = prompt("Ingresa el número de elementos: ");
+            let arregloJuego = [];
+        
+            //Recorriendo el arreglo
+            
+                for (let i = 0; i < 3; i++) {
+                    arregloJuego[i] = [];
                     
-                    casilla.textContent = ('-'); 
-                    juegoArreglo.push([i + "" + j]);
-                    shadow.appendChild(casilla);
+                    for (let j = 0; j < 3; j++) {
+                        //Creamos un elemento de tipo botón 
+                        let boton = document.createElement('button');
+
+                        //a ese elemento "botón" se le coloca un texto
+                        boton.textContent = ('-'); 
+                        console.log("Botón es un elemento botón: " + boton);
+                        
+                        //al arreglo se le añade el botón y se crea el Evento listener
+                        boton.addEventListener("click", () => this.onCellClick(boton))
+                        arregloJuego[i][j] = boton;
+                    
+                        console.log(arregloJuego[i][j]);
+                        console.log(boton);
+                        this.shadow.appendChild(boton);
+                    }
+                }
+                
+            
+        }
+        
+        //método que le pasa el botón al momento de hacer click
+        onCellClick(button) {
+            //se modifica el contenido del botón con respecto a lo que capturemos con lo dado por el usuario (prompt)
+            button.textContent = prompt(" Jugando: Colocar X u O" );
+            button.textContent = button.textContent.toUpperCase();
+        }
+
+        verifica(boton){
+            if(boton[i][j] === boton[i][j+1] && boton[i][j+1] === boton[i][j+2]){
+                alert("Ganaste");
             }
         }
-
-        }
-
-        connectedCallback() {
-       console.log('Gato creado');
-        }
-    
     }
-
+        console.log('Gato creado');
+        
     customElements.define('juego-gato', JuegoGato);
-
     </script>
 
 </head>
 <body>
-    <h2> Juego del Gato </h2>
+    <h2> Juego del Gato</h2>
     <juego-gato> </juego-gato>
 </body>
 </html>
 
 
 <!--
-
     Generar un juego del gato dinámico que se pueda jugar tal y como lo conocemos en la vida real.
 La condiciones son: no se puede usar document.querySelector, ni document.getElementById, ni ningun otro selector que nos de los valores de un elemento.
 Todo debe de estar dentro del componente.
-
 Aquí viene la mecánica:
 Se pintarán por default los 9 valores que se tienen en el gato por default, cada uno de ellos será un botón que cuando le des click te preguntará que valor deseas 
 colocar (esta acción será realizada por un prompt), solamente puedes colocar una 'X' o un 'O'. 
-
 Para el ejemplo solamente se revisarán las columnas y las filas, por el momento la diagonal quedará descartada (puntos extra si la haces).
-
 Todo, absolutamente todo deberá ser creado desde el componente web.
-
 Consejo: Los estilos dejalos al final, si no te sale correctamente en la consola, hazlo en tu cuaderno y verifica ya en el código. 
 Recuerden que lo más importante a evaluar es el cómo funciona y no el cómo se ve.
-
 Dudas y preguntas por acá andamos.
-
-
 -->
