@@ -41,7 +41,7 @@
                     }
                     this.arregloJuego.push(arregloJuegoTemp);
                 }
-                //this.gatoCuadro();
+                this.gatoCuadro();
             }
     
             //método que le pasa el botón al momento de hacer click
@@ -102,6 +102,17 @@
                 return ganador;
             }
 
+            gatoCuadro() {
+                //forEach dice que del arregloJuego por cada renglón se va a crear un elemento div. 
+                this.arregloJuego.forEach(renglon => {
+                let div = document.createElement('div');
+                //Y cada botón de cada renglon se va agregar a div
+                renglon.forEach(button => {
+                    div.appendChild(button);
+                });
+                this.shadow.appendChild(div);
+            });
+            }
         }
         console.log('Gato creado');
         customElements.define('juego-gato', JuegoGato);
