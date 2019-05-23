@@ -6,60 +6,105 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Juego del Gato Componente</title>
 
-    <script>
-    
-    class JuegoGato extends HTMLElement {
-        constructor () {
-            super();
-            this.shadow = this.attachShadow({mode: 'open'});
-        }
-        connectedCallback() {
+    <style>
+            body{
+                height: 100vh;
+            }
+    </style>
 
-            //let tamanio = prompt("Ingresa el número de elementos: ");
-            let arregloJuego = [];
-        
-            //Recorriendo el arreglo
-            
-                for (let i = 0; i < 3; i++) {
-                    arregloJuego[i] = [];
-                    
-                    for (let j = 0; j < 3; j++) {
+    <script>
+        class JuegoGato extends HTMLElement {
+            constructor () {
+                super();
+                this.shadow = this.attachShadow({mode: 'open'});
+            }
+    
+            //Ciclo de vida del Web Component, se ejecuta cuando se agrega al DOM
+            //Cuando se ejecuta el appendchild se ejecuta el connectedCallBack
+            connectedCallback() {
+                this.tamanio = parseInt(prompt("Ingresa el número de elementos: ")) || 3;
+                this.arregloJuego = [];
+                this.gana = false;
+                //Recorriendo el arreglo
+                for (let i = 0; i < this.tamanio; i++) {
+                    const arregloJuegoTemp = [];    
+                    for (let j = 0; j < this.tamanio; j++) {
                         //Creamos un elemento de tipo botón 
                         let boton = document.createElement('button');
-
                         //a ese elemento "botón" se le coloca un texto
                         boton.textContent = ('-'); 
-                        console.log("Botón es un elemento botón: " + boton);
-                        
+                        //console.log("Botón es un elemento botón: " + boton);
                         //al arreglo se le añade el botón y se crea el Evento listener
-                        boton.addEventListener("click", () => this.onCellClick(boton))
-                        arregloJuego[i][j] = boton;
-                    
-                        console.log(arregloJuego[i][j]);
-                        console.log(boton);
+                        boton.addEventListener('click', () => this.onCellClick(boton))
+                        arregloJuegoTemp.push(boton);
                         this.shadow.appendChild(boton);
                     }
+                    this.arregloJuego.push(arregloJuegoTemp);
                 }
-                
-            
-        }
-        
-        //método que le pasa el botón al momento de hacer click
-        onCellClick(button) {
-            //se modifica el contenido del botón con respecto a lo que capturemos con lo dado por el usuario (prompt)
-            button.textContent = prompt(" Jugando: Colocar X u O" );
-            button.textContent = button.textContent.toUpperCase();
-        }
-
-        verifica(boton){
-            if(boton[i][j] === boton[i][j+1] && boton[i][j+1] === boton[i][j+2]){
-                alert("Ganaste");
+                //this.gatoCuadro();
             }
+    
+            //método que le pasa el botón al momento de hacer click
+            onCellClick(button) {
+
+                if(button.textContent === '-'){
+                    //se modifica el contenido del botón con respecto a lo que capturemos con lo dado por el usuario (prompt)
+                    button.textContent = prompt(" Coloca tu ficha (X u O)" ).toUpperCase();
+
+                    this.verificarHorizontal();
+                    console.log(this.verificarHorizontal());
+                    this.verificarVertical();
+                    console.log(this.verificarVertical());
+                    if(this.verificarHorizontal() || this.verificarVertical()){
+                        alert('¡GANASTE JUGADOR DE ' + button.textContent + '!');
+                        alert('Juguemos nuevamente');
+                        location.reload(); 
+                    }
+
+                } else if (button.textContent === 'X' || button.textContent === 'O'){
+                    alert("No puedes tirar aquí. Ya está ocupada la celda");
+                }
+            }
+
+            verificarHorizontal(){
+                //Some varifica si algún elemento de una matriz cumple algo proporcionado por una función, y ejecuta la función para cada elemento. 
+                //Devuelve true si alguno de los elementos cumple la prueba, sino, devuelve false. 
+                let verificaHorizontal = this.arregloJuego.some(renglon => { 
+                    console.log(renglon);
+                    //Con filter se crea un array con todos los elementos que cumplan una condición
+                    let resultadoDeX = renglon.filter(i => i.textContent === 'X');
+                    let resultadoDeO = renglon.filter(i => i.textContent === 'O');
+                    return ((resultadoDeX.length === this.tamanio)|| resultadoDeO.length === this.tamanio)
+                    });
+                return verificaHorizontal;
+            }
+
+            verificarVertical(){
+                //Se genera una bandera para regresar si hay un ganador
+                let ganador = false;
+                let contadorX = 0;
+                let contadorO = 0;
+                //Se recorre el arreglo 
+                for(let i = 0; i < this.tamanio; i++){
+                    for(let j = 0; j < this.tamanio; j++){
+                        //si el contenido del elemento en la posición j,i es igual al valor X
+                        if(this.arregloJuego[j][i].textContent === 'X'){
+                            contadorX++;
+                        } else if(this.arregloJuego[j][i].textContent === 'O'){
+                            contadorO++;
+                        }
+                    }
+                    if(contadorX === this.tamanio || contadorO === this.tamanio){
+                        ganador = true;
+                    }
+                    break;
+                }
+                return ganador;
+            }
+
         }
-    }
         console.log('Gato creado');
-        
-    customElements.define('juego-gato', JuegoGato);
+        customElements.define('juego-gato', JuegoGato);
     </script>
 
 </head>
@@ -83,3 +128,5 @@ Consejo: Los estilos dejalos al final, si no te sale correctamente en la consola
 Recuerden que lo más importante a evaluar es el cómo funciona y no el cómo se ve.
 Dudas y preguntas por acá andamos.
 -->
+
+<!-- CurrentInput || X u O-->
